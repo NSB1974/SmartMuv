@@ -14,9 +14,9 @@ if __name__ == "__main__":
     config.read("config.ini")
     input_dir = config.get('directories', 'contract_directory')
     
-    contract_name = "CustomToken" #0x10cfae91f373917eca57ccc3add7016fca132f22
+    contract_name = "Pleiadian" #0x10cfae91f373917eca57ccc3add7016fca132f22
     cont_addr = "0x10cfae91f373917eca57ccc3add7016fca132f22"
-    compiler_version = "0.4.25"
+    compiler_version = "0.8.26"
     # you can either add network of your own choice in config.ini or choose from the following options:
     # "test" (Sepolia), "mainnet" (Ethereum Mainnet), "mumbai", "polygon", "bsctest", and "bsc"
     network = "mainnet"    

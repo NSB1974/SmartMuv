@@ -26,7 +26,7 @@
     },
     {
         "Address": "0x10cfae91f373917eca57ccc3add7016fca132f22",
-        "Contract Name": "CustomToken",
-        "Compiler Version": "0.4.25"
+        "Contract Name": "Pleiadian",
+        "Compiler Version": "0.8.26"
     }
 ]
