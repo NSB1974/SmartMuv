@@ -23,5 +23,10 @@
         "Address": "0x145f9bbd9f1ca0923e81e05c2ac04fda2310d774",
         "Contract Name": "VACCToken",
         "Compiler Version": "0.4.24"
+    },
+    {
+        "Address": "0x10cfae91f373917eca57ccc3add7016fca132f22",
+        "Contract Name": "CustomToken",
+        "Compiler Version": "0.4.25"
     }
 ]
