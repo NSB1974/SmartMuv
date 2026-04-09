@@ -3,6 +3,8 @@ import pprint
 from src.key_approx_analysis.key_approx_analyzer import extract_slot_details, generate_final_key_approx_results, key_approx_analyzer
 from src.state_extraction.transactions import get_internal_transactions
 from src.state_extraction.transactions import get_transactions
+from src.state_extraction.transactions import get_blockscout_transactions
+from src.state_extraction.transactions import get_blockscout_internal_transactions
 from src.state_extraction.slot_calculator import calculate_slots
 from src.ast_parsing.ast_parser import generate_ast, get_contract_details, get_contract_details_new
 import collections
@@ -622,6 +624,9 @@ def extract_regular_variables(cont_name, source_code, cont_addr, compiler_versio
     elif net == "bsc":
         BLOCKCHAIN_NODE_LINK = config.get('infura', 'rpc_bsc_node_link')
         BLOCKCHAIN_NODE_PID = config.get('infura', 'rpc_bsc_pid')
+    elif net == "blockscout":
+        BLOCKCHAIN_NODE_LINK = config.get('infura', 'infura_node_link')
+        BLOCKCHAIN_NODE_PID = config.get('infura', 'infura_pid')
 
     w3 = Web3(Web3.HTTPProvider(BLOCKCHAIN_NODE_LINK + BLOCKCHAIN_NODE_PID))
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -718,6 +723,13 @@ def extract_contract_state(cont_name, source_code, cont_addr, compiler_version, 
         BLOCKCHAIN_NODE_PID = config.get('infura', 'rpc_bsc_pid')
         TRANSACTION_LINK = config.get('bscscan', 'transaction_link')
         INTERNAL_TRANSACTION_LINK = config.get('bscscan', 'internal_transaction_link')
+    elif net == "blockscout":
+        BLOCK_SCANNER_API_KEY = config.get('blockscout', 'blockscout_api_key')
+        BLOCKCHAIN_NODE_LINK = config.get('infura', 'infura_node_link')
+        BLOCKCHAIN_NODE_PID = config.get('infura', 'infura_pid')
+        chain_id = config.get('blockscout', 'chain_id')
+        TRANSACTION_LINK = config.get('blockscout', 'transaction_link').format(chain_id, cont_addr)
+        INTERNAL_TRANSACTION_LINK = config.get('blockscout', 'internal_transaction_link').format(chain_id, cont_addr)
 
 
     w3 = Web3(Web3.HTTPProvider(BLOCKCHAIN_NODE_LINK + BLOCKCHAIN_NODE_PID))
@@ -738,8 +750,12 @@ def extract_contract_state(cont_name, source_code, cont_addr, compiler_version, 
     contract_abi = generate_abi(source_code, cont_name)
 
     print("Retrieving transactions:")
-    all_transactions = get_transactions(cont_addr, all_transactions, TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
-    all_transactions += get_internal_transactions(cont_addr, all_transactions, INTERNAL_TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
+    if net == "blockscout":
+        all_transactions = get_blockscout_transactions(cont_addr, all_transactions, TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
+        all_transactions += get_blockscout_internal_transactions(cont_addr, all_transactions, INTERNAL_TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
+    else:
+        all_transactions = get_transactions(cont_addr, all_transactions, TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
+        all_transactions += get_internal_transactions(cont_addr, all_transactions, INTERNAL_TRANSACTION_LINK, BLOCK_SCANNER_API_KEY)
     print("Total transactions ->", len(all_transactions))
     tx_arg_details = {}
     slots_and_data = []

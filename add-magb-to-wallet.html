@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add MAGB to Base Wallet</title>
+  <style>
+    body { font-family: sans-serif; background: #f8f9fa; color: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0001; padding: 2rem 2.5rem; max-width: 400px; text-align: center; }
+    button { background: #0052ff; color: #fff; border: none; border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 1.1rem; cursor: pointer; margin-top: 1.5rem; transition: background 0.2s; }
+    button:hover { background: #003bb3; }
+    .token-info { margin-top: 1.5rem; font-size: 0.97rem; color: #444; }
+    .success { color: #0a0; margin-top: 1rem; }
+    .error { color: #c00; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Add <span style="color:#0052ff">MAGB</span> Token to Wallet</h2>
+    <p>This will add the Magenta (MAGB) token to your Base wallet (MetaMask, Coinbase Wallet, Rabby, etc).</p>
+    <button id="addTokenBtn">Add MAGB to Wallet</button>
+    <div class="token-info">
+      <div><b>Contract:</b> 0xfe91f7ef81ec8ae07ba563a76943caf52df3bfa9</div>
+      <div><b>Symbol:</b> MAGB</div>
+      <div><b>Decimals:</b> 8</div>
+      <div><b>Network:</b> Base Mainnet (Chain ID: 8453)</div>
+    </div>
+    <div id="result"></div>
+  </div>
+  <script>
+    document.getElementById('addTokenBtn').onclick = async function() {
+      if (!window.ethereum) {
+        document.getElementById('result').innerHTML = '<span class="error">No wallet detected. Please install MetaMask, Coinbase Wallet, or Rabby.</span>';
+        return;
+      }
+      try {
+        const wasAdded = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: '0xfe91f7ef81ec8ae07ba563a76943caf52df3bfa9',
+              symbol: 'MAGB',
+              decimals: 8,
+            },
+          },
+        });
+        if (wasAdded) {
+          document.getElementById('result').innerHTML = '<span class="success">MAGB was added to your wallet!</span>';
+        } else {
+          document.getElementById('result').innerHTML = '<span class="error">Token addition was cancelled.</span>';
+        }
+      } catch (err) {
+        document.getElementById('result').innerHTML = '<span class="error">' + err.message + '</span>';
+      }
+    };
+  </script>
+</body>
+</html>
